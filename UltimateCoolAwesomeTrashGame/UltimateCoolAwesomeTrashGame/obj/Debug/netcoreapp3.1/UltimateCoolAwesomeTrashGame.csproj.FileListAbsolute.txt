@@ -34,3 +34,5 @@ D:\SchoolWork\2EACL2\GameDev\game-development-project-2020-2021-OnsJelle\Ultimat
 D:\SchoolWork\2EACL2\GameDev\game-development-project-2020-2021-OnsJelle\UltimateCoolAwesomeTrashGame\UltimateCoolAwesomeTrashGame\obj\Debug\netcoreapp3.1\UltimateCoolAwesomeTrashGame.dll
 D:\SchoolWork\2EACL2\GameDev\game-development-project-2020-2021-OnsJelle\UltimateCoolAwesomeTrashGame\UltimateCoolAwesomeTrashGame\obj\Debug\netcoreapp3.1\UltimateCoolAwesomeTrashGame.pdb
 D:\SchoolWork\2EACL2\GameDev\game-development-project-2020-2021-OnsJelle\UltimateCoolAwesomeTrashGame\UltimateCoolAwesomeTrashGame\obj\Debug\netcoreapp3.1\UltimateCoolAwesomeTrashGame.genruntimeconfig.cache
+D:\SchoolWork\2EACL2\GameDev\game-development-project-2020-2021-OnsJelle\UltimateCoolAwesomeTrashGame\UltimateCoolAwesomeTrashGame\bin\Debug\netcoreapp3.1\Content\BlueBlop.xnb
+D:\SchoolWork\2EACL2\GameDev\game-development-project-2020-2021-OnsJelle\UltimateCoolAwesomeTrashGame\UltimateCoolAwesomeTrashGame\bin\Debug\netcoreapp3.1\Content\Blue&RedBlob.xnb

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SharpDX.XAudio2;
+using UltimateCoolAwesomeTrashGame.Input;
 
 namespace UltimateCoolAwesomeTrashGame
 {
@@ -8,6 +10,9 @@ namespace UltimateCoolAwesomeTrashGame
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        private Texture2D texture;
+        Blob blob;
 
         public Game1()
         {
@@ -20,6 +25,7 @@ namespace UltimateCoolAwesomeTrashGame
         {
             // TODO: Add your initialization logic here
 
+            
             base.Initialize();
         }
 
@@ -27,15 +33,25 @@ namespace UltimateCoolAwesomeTrashGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            texture = Content.Load<Texture2D>("Blue&RedBlob");
             // TODO: use this.Content to load your game content here
+
+            InitializeGameObjects();
+        }
+
+        private void InitializeGameObjects()
+        {
+            blob = new Blob(texture, new KeyboardReader());
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
+
+            blob.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -45,6 +61,12 @@ namespace UltimateCoolAwesomeTrashGame
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+
+            _spriteBatch.Begin();
+
+            blob.Draw(_spriteBatch);
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
