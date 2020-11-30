@@ -15,26 +15,19 @@ namespace UltimateCoolAwesomeTrashGame.Commands
         public MoveCommand()
         {
             this.speed = new Vector2(5, 5);
-            acceleration = new Vector2(0.1f,0f);
+            acceleration = new Vector2(0.1f, 0f);
         }
 
         public void Execute(ITransform transform, Vector2 direction)
         {
             direction *= speed;
             transform.Position += direction;
-            DragHandler(transform,direction);
+            //DragHandler(transform, direction);
         }
 
-        public void DragHandler(ITransform transform, Vector2 direction)
+        /*public void DragHandler(ITransform transform, Vector2 direction)
         {
-            if (transform.Position.Y < 1)
-            {
-                speed = new Vector2(5, 5);
-            }
-            if (direction.Y >= 1 && speed.X < 10)
-            {
-                speed += acceleration;
-            }
-        }
+            speed = new Vector2(5, 5);
+        }*/
     }
 }

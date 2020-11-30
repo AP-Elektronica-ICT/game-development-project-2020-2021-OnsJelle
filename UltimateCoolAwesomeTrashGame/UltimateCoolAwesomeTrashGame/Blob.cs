@@ -45,7 +45,7 @@ namespace UltimateCoolAwesomeTrashGame
 
             Position = new Vector2(0, 0);
 
-            _collisionRectangle = new Rectangle((int)Position.X, (int)Position.Y,64,64);
+            _collisionRectangle = new Rectangle((int)Position.X + 32, (int)Position.Y + 32,32,32);
         }
 
         public void Update(GameTime gameTime){
@@ -54,13 +54,12 @@ namespace UltimateCoolAwesomeTrashGame
 
             HasJumped(direction);
             MoveHorizontal(direction);
-            
-
 
             
             currentAnimation.Update(gameTime);
 
             _collisionRectangle.X = (int)Position.X;
+            _collisionRectangle.Y = (int)Position.Y;
             CollisionRectangle = _collisionRectangle;
 
         }
@@ -77,12 +76,12 @@ namespace UltimateCoolAwesomeTrashGame
         }
 
         public void HasJumped(Vector2 direction)
-        {
-            if (direction.Y == 1)
+        {                       
+            if (direction.Y == -1) //&& pos.Y is on ground --> for later
             {
                 hasJumped = !hasJumped;
                 blobBlue.animHandler(hasJumped);
-            }
+            }            
         }
     }
 }

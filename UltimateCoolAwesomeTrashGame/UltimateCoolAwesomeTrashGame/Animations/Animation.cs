@@ -43,5 +43,9 @@ namespace UltimateCoolAwesomeTrashGame.Animations
                 counter = 0;
         }
 
+        public void clearFrame()
+        {
+            frames.Clear();
+        }
     }
 }
