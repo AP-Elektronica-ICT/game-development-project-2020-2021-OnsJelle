@@ -2,10 +2,13 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.XAudio2;
+using System.Collections.Generic;
 using System.Diagnostics;
+using UltimateCoolAwesomeTrashGame.Camera;
 using UltimateCoolAwesomeTrashGame.Collision;
 using UltimateCoolAwesomeTrashGame.Input;
 using UltimateCoolAwesomeTrashGame.World;
+using UltimateCoolAwesomeTrashGame.World.Objects;
 
 namespace UltimateCoolAwesomeTrashGame
 {
@@ -13,15 +16,20 @@ namespace UltimateCoolAwesomeTrashGame
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private Cam camera;
         //Textures
         private Texture2D texture, blockTexture;
         //Objects
         Blob blob;
-        Block block;
         //collision
         CollisionManager collisionManager;
+
+        //Level list
+        List<WorldLevel> levels = new List<WorldLevel>();
+        int i = 0; //level counter
         //Level
         WorldLevel level;
+        bool hasWon = false;
 
         //int i = 0;
         public Game1()
@@ -35,19 +43,23 @@ namespace UltimateCoolAwesomeTrashGame
         {
             // TODO: Add your initialization logic here
 
-            //Level
-            level = new WorldLevel(Content);
-            level.CreateWorld();
+            //Add all levels
+            levels.Add(new FirstLevel(Content));
+            levels.Add(new SecondLevel(Content));
+            //Begin Level
+            level = levels[i];
 
             //collision
-            collisionManager = new CollisionManager();
-            
+            collisionManager = new CollisionManager(new CollisionHelper());
+
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            camera = new Cam(GraphicsDevice.Viewport);
 
             texture = Content.Load<Texture2D>("Blue&RedBlob");
             blockTexture = Content.Load<Texture2D>("Block");
@@ -58,8 +70,8 @@ namespace UltimateCoolAwesomeTrashGame
 
         private void InitializeGameObjects()
         {
-            blob = new Blob(texture, new KeyboardReader());
-            block = new Block(blockTexture, new Vector2(300, 50));
+            blob = new Blob(texture, new KeyboardReader(), collisionManager);
+            //block = new Block(blockTexture, new Vector2(300, 50));
         }
 
         protected override void Update(GameTime gameTime)
@@ -68,15 +80,49 @@ namespace UltimateCoolAwesomeTrashGame
                 Exit();
 
             // TODO: Add your update logic here
+            if (hasWon)
+            {
+                //blob.reset();
+                i++;
+                if (i > levels.Count)
+                {
+                    //End of the whole game
+                }
+                else
+                {
+                    level = levels[i];
+                    hasWon = false;
+                    blob.Position = level.StartPosition;
+                }
+            }
 
             blob.Update(gameTime);
-            block.Update();
 
-          /*  if (collisionManager.CheckCollision(blob.CollisionRectangle, block.CollisionRectangle))
+            foreach (var item in level.BlokArray)
             {
-                
-                Debug.WriteLine(i++);
-            }*/
+                if (item != null)
+                {
+                    collisionManager.ExecuteCollision(blob.CollisionRectangle, item.CollisionRectangle, level.Width, level.Height, blob);
+                }
+
+                //collisionManager.CheckCollision(blob.CollisionRectangle, tile.Rectangle, lv1.Width, lv1.Height);
+                //collisionManager.CheckUpdate(blob.HasJumped, blob.Velocity, blob.Position);
+                //blob.Collision(blob.CollisionRectangle, tile.Rectangle, lv1.Width, lv1.Height);
+                //blob.CheckCollision(blob.CollisionRectangle, tile.Rectangle, lv1.Width, lv1.Height);
+
+            }
+            camera.Update(blob.Position, level.Width, level.Height);
+
+            foreach (var platform in level.Platforms)
+            {
+                platform.animHandler(blob.hasJumped);
+            }
+
+
+            //Game over check
+            hasWon = collisionManager.CheckEndCollision(blob.CollisionRectangle, level.endPlatform.CollisionRectangle);
+
+
 
             base.Update(gameTime);
         }
@@ -87,9 +133,12 @@ namespace UltimateCoolAwesomeTrashGame
 
             // TODO: Add your drawing code here
 
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                               BlendState.AlphaBlend,
+                               null, null, null, null,
+                               camera.Transform);
 
-            block.Draw(_spriteBatch);
+            //block.Draw(_spriteBatch);
             blob.Draw(_spriteBatch);
 
             level.DrawWorld(_spriteBatch);

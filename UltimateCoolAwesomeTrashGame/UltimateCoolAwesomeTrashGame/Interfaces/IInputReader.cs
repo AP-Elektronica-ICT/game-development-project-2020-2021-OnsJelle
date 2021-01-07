@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace UltimateCoolAwesomeTrashGame.Input
 {
-    interface IInputReader
+    public interface IInputReader
     {
         Vector2 ReadInput();        
     }

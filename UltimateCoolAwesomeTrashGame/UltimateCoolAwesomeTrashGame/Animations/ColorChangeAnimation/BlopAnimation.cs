@@ -22,8 +22,6 @@ namespace UltimateCoolAwesomeTrashGame.Animations.ColorChangeAnimation
             {
                 _animation.AddFrame(new AnimationFrame(new Rectangle(i, 0, 128, 128)));
             }
-            
-            
         }
 
         public Animation Animation
@@ -39,6 +37,7 @@ namespace UltimateCoolAwesomeTrashGame.Animations.ColorChangeAnimation
 
         public void Update(GameTime gameTime)
         {
+            //animHandler(hasJumped);
             _animation.Update(gameTime);
         }
 
@@ -53,7 +52,7 @@ namespace UltimateCoolAwesomeTrashGame.Animations.ColorChangeAnimation
                 }
             }
             else
-            {                
+            {
                 for (int i = 0; i < 5 * 128; i += 128)
                 {
                     _animation.AddFrame(new AnimationFrame(new Rectangle(i, 0, 128, 128)));

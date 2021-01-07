@@ -7,7 +7,7 @@ using UltimateCoolAwesomeTrashGame.Interfaces;
 
 namespace UltimateCoolAwesomeTrashGame.World
 {
-    class Block : ICollision
+    class Block : ICollision, ITransform
     {
         private Texture2D blockTexture;
         public Vector2 Position { get; set; }

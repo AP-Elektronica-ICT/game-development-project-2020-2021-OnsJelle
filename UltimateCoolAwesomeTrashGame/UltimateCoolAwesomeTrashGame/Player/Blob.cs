@@ -10,15 +10,20 @@ using UltimateCoolAwesomeTrashGame.Commands;
 using UltimateCoolAwesomeTrashGame.Interfaces;
 using UltimateCoolAwesomeTrashGame.Input;
 using UltimateCoolAwesomeTrashGame.Animations.ColorChangeAnimation;
+using UltimateCoolAwesomeTrashGame.Collision;
 
 namespace UltimateCoolAwesomeTrashGame
 {
-    class Blob : ITransform
+    public class Blob : ITransform, IMove
     {
-        private Texture2D blobTexture;        
+        private Texture2D blobTexture;
         //check for change
-        private bool hasJumped = false;
+        public bool HasJumped { get; set; }
+
+        public bool hasJumped = false;
+        public bool OnGround { get; set; }
         public Vector2 Position { get; set; }
+        public Vector2 Velocity { get; set; }
         public Rectangle CollisionRectangle { get; set; }
         private Rectangle _collisionRectangle;
 
@@ -29,59 +34,64 @@ namespace UltimateCoolAwesomeTrashGame
         //private IGameCommand moveToCommand;
 
         IEntityAnimation blobBlue, currentAnimation;
-        
 
-        public Blob(Texture2D texture, IInputReader reader) 
+        CollisionManager collisionManager;
+
+        public Blob(Texture2D texture, IInputReader reader, CollisionManager collisionManager) 
         {
             blobTexture = texture;
             blobBlue = new BlopAnimation(texture, this); // Needs change Still-----------------------------
             currentAnimation = blobBlue;
-            
+            this.collisionManager = collisionManager;
 
             //Read Input
             this.inputReader = reader;
 
             moveCommand = new MoveCommand();
 
-            Position = new Vector2(0, 0);
+            Position = new Vector2(0, 200);
 
             _collisionRectangle = new Rectangle((int)Position.X + 32, (int)Position.Y + 32,32,32);
         }
 
         public void Update(GameTime gameTime){
-
             var direction = inputReader.ReadInput();
-
-            HasJumped(direction);
-            MoveHorizontal(direction);
-
-            
+           
+            Move(direction);
+            currentAnimation.animHandler(hasJumped);
             currentAnimation.Update(gameTime);
 
             _collisionRectangle.X = (int)Position.X;
             _collisionRectangle.Y = (int)Position.Y;
             CollisionRectangle = _collisionRectangle;
-
         }
+               
 
-        private void MoveHorizontal(Vector2 _direction)
+        private void Move(Vector2 _direction)
         {
+            //jumping movement
+            if (_direction.Y == -1 && HasJumped == false)
+            {                              
+                Velocity = new Vector2(Velocity.X, -7f);
+                HasJumped = true;
+                hasJumped = !hasJumped;                
+            }            
+
+
+            Position += Velocity;
+
+            if (!OnGround && Velocity.Y < 10)
+            {
+                Velocity += new Vector2(Velocity.X, 0.6f);              
+            }
+            
+            
             moveCommand.Execute(this, _direction);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             currentAnimation.Draw(spriteBatch);
-            
-        }
-
-        public void HasJumped(Vector2 direction)
-        {                       
-            if (direction.Y == -1) //&& pos.Y is on ground --> for later
-            {
-                hasJumped = !hasJumped;
-                blobBlue.animHandler(hasJumped);
-            }            
-        }
+        }        
     }
 }
