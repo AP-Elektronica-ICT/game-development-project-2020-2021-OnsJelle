@@ -18,8 +18,8 @@ namespace UltimateCoolAwesomeTrashGame.Input
                 direction = new Vector2(1, 0);
             if (state.IsKeyDown(Keys.Up))
                 direction = new Vector2(direction.X, -1);
-            if (state.IsKeyDown(Keys.Down))
-                direction = new Vector2(direction.X, 1);
+            //if (state.IsKeyDown(Keys.Down))
+            //    direction = new Vector2(direction.X, 1);
 
             return direction;
         }
