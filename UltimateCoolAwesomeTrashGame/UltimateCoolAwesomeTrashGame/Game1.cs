@@ -8,7 +8,7 @@ using UltimateCoolAwesomeTrashGame.Camera;
 using UltimateCoolAwesomeTrashGame.Collision;
 using UltimateCoolAwesomeTrashGame.Input;
 using UltimateCoolAwesomeTrashGame.World;
-using UltimateCoolAwesomeTrashGame.World.Objects;
+using UltimateCoolAwesomeTrashGame.MenuScreens;
 
 namespace UltimateCoolAwesomeTrashGame
 {
@@ -16,9 +16,20 @@ namespace UltimateCoolAwesomeTrashGame
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        //Boolean for intro
+        bool StartGame = false;
+        bool EndGame = false;
+        //Buttons
+        Button PlayBtn;
+        Button QuitBtn;
+        //Play again texture
+        Texture2D ReplayText;
+        Rectangle ReplayTextRec;
+        //Camera
         private Cam camera;
         //Textures
-        private Texture2D texture, blockTexture;
+        private Texture2D texture;
         //Objects
         Blob blob;
         //collision
@@ -43,9 +54,14 @@ namespace UltimateCoolAwesomeTrashGame
         {
             // TODO: Add your initialization logic here
 
+            //Intro Buttons
+            PlayBtn = new Button();
+            QuitBtn = new Button();
+
             //Add all levels
             levels.Add(new FirstLevel(Content));
             levels.Add(new SecondLevel(Content));
+
             //Begin Level
             level = levels[i];
 
@@ -59,10 +75,18 @@ namespace UltimateCoolAwesomeTrashGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            //Buttons for the intro screen
+            PlayBtn.Load(Content.Load<Texture2D>("PlayBtn"), new Vector2(275, 175));
+            QuitBtn.Load(Content.Load<Texture2D>("QuitBtn"), new Vector2(275, 325));
+            //You won text
+            ReplayText = Content.Load<Texture2D>("PlayAgain");
+            ReplayTextRec = new Rectangle(100, 0, ReplayText.Width, ReplayText.Height);
+            //Camera to follow the player
             camera = new Cam(GraphicsDevice.Viewport);
 
+            //PlayerTexture
             texture = Content.Load<Texture2D>("Blue&RedBlob");
-            blockTexture = Content.Load<Texture2D>("Block");
+
             // TODO: use this.Content to load your game content here
 
             InitializeGameObjects();
@@ -71,7 +95,6 @@ namespace UltimateCoolAwesomeTrashGame
         private void InitializeGameObjects()
         {
             blob = new Blob(texture, new KeyboardReader(), collisionManager);
-            //block = new Block(blockTexture, new Vector2(300, 50));
         }
 
         protected override void Update(GameTime gameTime)
@@ -79,16 +102,29 @@ namespace UltimateCoolAwesomeTrashGame
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            if (!StartGame)
+            {
+                IntroScreen();
+            }
+            if (EndGame)
+            {
+                StartGame = false;
+                //Sets back to First level
+                i = -1;
+                hasWon = false;
+            }
             // TODO: Add your update logic here
             if (hasWon)
             {
                 //blob.reset();
                 i++;
-                if (i > levels.Count)
+                if (i >= levels.Count)
                 {
                     //End of the whole game
+                    EndGame = true;
+                    StartGame = false;
                 }
-                else
+                if (!EndGame && levels[i] != null)
                 {
                     level = levels[i];
                     hasWon = false;
@@ -104,13 +140,8 @@ namespace UltimateCoolAwesomeTrashGame
                 {
                     collisionManager.ExecuteCollision(blob.CollisionRectangle, item.CollisionRectangle, level.Width, level.Height, blob);
                 }
-
-                //collisionManager.CheckCollision(blob.CollisionRectangle, tile.Rectangle, lv1.Width, lv1.Height);
-                //collisionManager.CheckUpdate(blob.HasJumped, blob.Velocity, blob.Position);
-                //blob.Collision(blob.CollisionRectangle, tile.Rectangle, lv1.Width, lv1.Height);
-                //blob.CheckCollision(blob.CollisionRectangle, tile.Rectangle, lv1.Width, lv1.Height);
-
             }
+
             camera.Update(blob.Position, level.Width, level.Height);
 
             foreach (var platform in level.Platforms)
@@ -118,33 +149,61 @@ namespace UltimateCoolAwesomeTrashGame
                 platform.animHandler(blob.hasJumped);
             }
 
-
             //Game over check
             hasWon = collisionManager.CheckEndCollision(blob.CollisionRectangle, level.endPlatform.CollisionRectangle);
-
-
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.Black);
+        { 
 
+            _spriteBatch.Begin();
+             
+            if (!StartGame)
+            {
+                if (EndGame)
+                {
+                    _spriteBatch.Draw(ReplayText, ReplayTextRec, Color.White);
+                }
+                PlayBtn.Draw(_spriteBatch);
+                QuitBtn.Draw(_spriteBatch);
+            }
+            _spriteBatch.End();
             // TODO: Add your drawing code here
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred,
+            if (StartGame )
+            {
+                GraphicsDevice.Clear(Color.Black);
+                _spriteBatch.Begin(SpriteSortMode.Deferred,
                                BlendState.AlphaBlend,
                                null, null, null, null,
                                camera.Transform);
+            
+                blob.Draw(_spriteBatch);
 
-            //block.Draw(_spriteBatch);
-            blob.Draw(_spriteBatch);
-
-            level.DrawWorld(_spriteBatch);
+                level.DrawWorld(_spriteBatch);
             _spriteBatch.End();
+            }
 
             base.Draw(gameTime);
+        }
+
+        void IntroScreen()
+        {
+            MouseState mouse = Mouse.GetState();
+
+            if (PlayBtn.isClicked)
+            {
+                StartGame = true;
+                EndGame = false;
+                PlayBtn.isClicked = false;
+            }
+            if (QuitBtn.isClicked)
+                Exit();
+
+            PlayBtn.Update(mouse);
+            QuitBtn.Update(mouse);
+
         }
     }
 }

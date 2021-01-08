@@ -35,14 +35,11 @@ namespace UltimateCoolAwesomeTrashGame
 
         IEntityAnimation blobBlue, currentAnimation;
 
-        CollisionManager collisionManager;
-
         public Blob(Texture2D texture, IInputReader reader, CollisionManager collisionManager) 
         {
             blobTexture = texture;
             blobBlue = new BlopAnimation(texture, this); // Needs change Still-----------------------------
             currentAnimation = blobBlue;
-            this.collisionManager = collisionManager;
 
             //Read Input
             this.inputReader = reader;

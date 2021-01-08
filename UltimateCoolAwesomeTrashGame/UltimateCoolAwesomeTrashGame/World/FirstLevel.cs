@@ -9,7 +9,6 @@ namespace UltimateCoolAwesomeTrashGame.World
 {
     class FirstLevel : WorldLevel
     {
-
         public FirstLevel(ContentManager content) : base(content)
         {
             tileArray = new int[,] {
@@ -25,7 +24,6 @@ namespace UltimateCoolAwesomeTrashGame.World
             
             InitializeContent();
 
-
             CreateWorld();
         }
 
@@ -35,8 +33,7 @@ namespace UltimateCoolAwesomeTrashGame.World
             texture_Pblue = content.Load<Texture2D>("PlatformBlue");            
             texture_Pred = content.Load<Texture2D>("PlatformRed");
             texture_Pgreen = content.Load<Texture2D>("PlatformGreen");
-        }
-        
+        }        
     }
 
     class SecondLevel : WorldLevel
