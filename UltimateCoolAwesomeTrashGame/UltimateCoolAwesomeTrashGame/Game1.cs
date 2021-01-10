@@ -12,6 +12,16 @@ using UltimateCoolAwesomeTrashGame.MenuScreens;
 
 namespace UltimateCoolAwesomeTrashGame
 {
+    /*Changes after 8Jan include*/
+
+    //- End screen
+        //Moving "You won" text to center
+        //Making it so end screen doesn't contain the last level (replacing the Clear()=>see line 170)
+
+    //- Resetting the playButton.isClicked boolean so the game doesn't instantly restart itself
+
+    /*End of changes*/
+
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -80,7 +90,7 @@ namespace UltimateCoolAwesomeTrashGame
             QuitBtn.Load(Content.Load<Texture2D>("QuitBtn"), new Vector2(275, 325));
             //You won text
             ReplayText = Content.Load<Texture2D>("PlayAgain");
-            ReplayTextRec = new Rectangle(100, 0, ReplayText.Width, ReplayText.Height);
+            ReplayTextRec = new Rectangle(200, 0, ReplayText.Width, ReplayText.Height); /*Text Was off-center and bugging me*/
             //Camera to follow the player
             camera = new Cam(GraphicsDevice.Viewport);
 
@@ -102,64 +112,68 @@ namespace UltimateCoolAwesomeTrashGame
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (!StartGame)
-            {
-                IntroScreen();
-            }
             if (EndGame)
             {
+                /*Reset the intro booleans*/
                 StartGame = false;
+                PlayBtn.isClicked = false;
                 //Sets back to First level
                 i = -1;
                 hasWon = false;
             }
-            // TODO: Add your update logic here
-            if (hasWon)
+            if (!StartGame)
             {
-                //blob.reset();
-                i++;
-                if (i >= levels.Count)
-                {
-                    //End of the whole game
-                    EndGame = true;
-                    StartGame = false;
-                }
-                if (!EndGame && levels[i] != null)
-                {
-                    level = levels[i];
-                    hasWon = false;
-                    blob.Position = level.StartPosition;
-                }
+                IntroScreen();
             }
-
-            blob.Update(gameTime);
-
-            foreach (var item in level.BlokArray)
+            else
             {
-                if (item != null)
+                // TODO: Add your update logic here
+                if (hasWon)
                 {
-                    collisionManager.ExecuteCollision(blob.CollisionRectangle, item.CollisionRectangle, level.Width, level.Height, blob);
+                    //blob.reset();
+                    i++;
+                    if (i >= levels.Count)
+                    {
+                        //End of the whole game
+                        EndGame = true;
+                        StartGame = false;
+                    }
+                    if (!EndGame && levels[i] != null)
+                    {
+                        level = levels[i];
+                        hasWon = false;
+                        blob.Position = level.StartPosition;
+                    }
                 }
+
+                blob.Update(gameTime);
+
+                foreach (var item in level.BlokArray)
+                {
+                    if (item != null)
+                    {
+                        collisionManager.ExecuteCollision(blob.CollisionRectangle, item.CollisionRectangle, level.Width, level.Height, blob);
+                    }
+                }
+
+                camera.Update(blob.Position, level.Width, level.Height);
+
+                foreach (var platform in level.Platforms)
+                {
+                    platform.animHandler(blob.hasJumped);
+                }
+
+                //Game over check
+                hasWon = collisionManager.CheckEndCollision(blob.CollisionRectangle, level.endPlatform.CollisionRectangle);
+
+                base.Update(gameTime);
             }
-
-            camera.Update(blob.Position, level.Width, level.Height);
-
-            foreach (var platform in level.Platforms)
-            {
-                platform.animHandler(blob.hasJumped);
-            }
-
-            //Game over check
-            hasWon = collisionManager.CheckEndCollision(blob.CollisionRectangle, level.endPlatform.CollisionRectangle);
-
-            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
-        { 
-
+        {
+            GraphicsDevice.Clear(Color.Black); /*Replaced it so the end screen doesn't contain The last level*/
             _spriteBatch.Begin();
-             
             if (!StartGame)
             {
                 if (EndGame)
@@ -171,18 +185,18 @@ namespace UltimateCoolAwesomeTrashGame
             }
             _spriteBatch.End();
             // TODO: Add your drawing code here
-            if (StartGame )
+            if (StartGame && !EndGame)
             {
-                GraphicsDevice.Clear(Color.Black);
+
                 _spriteBatch.Begin(SpriteSortMode.Deferred,
                                BlendState.AlphaBlend,
                                null, null, null, null,
                                camera.Transform);
-            
+
                 blob.Draw(_spriteBatch);
 
                 level.DrawWorld(_spriteBatch);
-            _spriteBatch.End();
+                _spriteBatch.End();
             }
 
             base.Draw(gameTime);
@@ -196,7 +210,6 @@ namespace UltimateCoolAwesomeTrashGame
             {
                 StartGame = true;
                 EndGame = false;
-                PlayBtn.isClicked = false;
             }
             if (QuitBtn.isClicked)
                 Exit();
