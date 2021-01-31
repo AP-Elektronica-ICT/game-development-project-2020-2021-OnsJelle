@@ -19,7 +19,7 @@ namespace UltimateCoolAwesomeTrashGame
         //Making it so end screen doesn't contain the last level (replacing the Clear()=>see line 170)
 
     //- Resetting the playButton.isClicked boolean so the game doesn't instantly restart itself
-
+    //- Fixed playBtn again, because now it wouldn't start upon pressing (replaced from 119=>139)
     /*End of changes*/
 
     public class Game1 : Game
@@ -115,8 +115,7 @@ namespace UltimateCoolAwesomeTrashGame
             if (EndGame)
             {
                 /*Reset the intro booleans*/
-                StartGame = false;
-                PlayBtn.isClicked = false;
+                StartGame = false; 
                 //Sets back to First level
                 i = -1;
                 hasWon = false;
@@ -137,6 +136,7 @@ namespace UltimateCoolAwesomeTrashGame
                         //End of the whole game
                         EndGame = true;
                         StartGame = false;
+                        PlayBtn.isClicked = false;                        
                     }
                     if (!EndGame && levels[i] != null)
                     {
