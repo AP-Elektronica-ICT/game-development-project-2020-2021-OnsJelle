@@ -52,6 +52,11 @@ namespace UltimateCoolAwesomeTrashGame.World
 
 
         //Yet to make this SOLID somehow
+
+        /*
+         Een laat gedachte: Een dictionary maken van (int,string) die dan een nummer als key heeft en een value van de texture naam
+         te laat aan gedacht dus ik kan het niet meer testen.
+         */
         public void CreateWorld()
         {
             for (int x = 0; x < tileArray.GetLength(0); x++)
